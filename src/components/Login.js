@@ -1,10 +1,18 @@
 import React, { useState, useRef } from "react";
 import Header from "./Header";
 import { validateFormData } from "../utils/validate";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { formatFirebaseErrors } from "../utils/firebase-error-handling";
+import { auth } from "../utils/firebase";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [signedInUser, setSignedInUser] = useState(null);
+
   const email = useRef(null);
   const password = useRef(null);
 
@@ -19,10 +27,51 @@ const Login = () => {
       password.current.value
     );
     setErrorMessage(message);
+    if (message) return;
+
+    if (!isSignInForm) {
+      //  create new user in firebase
+      createUserWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed up
+          const user = userCredential.user;
+          console.log(user);
+          alert("New user registered succesfully");
+        })
+        .catch((error) => {
+          const { code: errorCode, message: errorMessage } = error;
+          const firebaseErrorMessage = formatFirebaseErrors(errorCode);
+          setErrorMessage(firebaseErrorMessage);
+        });
+    } else {
+      //  sign in logic
+      signInWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log(user);
+          setSignedInUser(user.email);
+          alert(`${user.email} logged in successfully`);
+        })
+        .catch((error) => {
+          const { code: errorCode, message: errorMessage } = error;
+          const firebaseErrorMessage = formatFirebaseErrors(errorCode);
+          setErrorMessage(firebaseErrorMessage);
+        });
+    }
   };
   return (
     <div>
       <Header />
+      <p className="text-center">signedIn User : {signedInUser}</p>
       <div className="absolute">
         <img
           className=" w-full h-full"
