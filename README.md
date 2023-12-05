@@ -2,9 +2,14 @@
 
 - create-react-app
 - configured tailwindcss
+- added routing with react-router-dom
 - header build
 - login form
 - sign up form
+- Form validations
+- Added Firebase into project
+- Added email-pass validation into firebase
+- Deployed app on firebase
 
 # Features
 
@@ -23,6 +28,11 @@
 - Netflix GPT
   - Search bar
   - mokvie suggestions
+
+
+
+Firebase deployed snapshots ->
+![Screenshot (45)](https://github.com/tikhepooja11/Netflix-GPT/assets/47672660/2b6e1b73-aae0-4d46-961d-929a06e0c190)
 
 # Getting Started with Create React App
 
