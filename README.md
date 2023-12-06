@@ -37,6 +37,13 @@ Firebase deployed snapshots ->
 
 ![Screenshot (44)](https://github.com/tikhepooja11/Netflix-GPT/assets/47672660/f556948a-34db-4f2e-8c35-5b3db44209d0)
 
+Inspect Tab and firebase tabs ->
+![Screenshot (48)](https://github.com/tikhepooja11/Netflix-GPT/assets/47672660/673d20bc-cc3d-4075-add5-06ed1b4d600d)
+
+![Screenshot (47)](https://github.com/tikhepooja11/Netflix-GPT/assets/47672660/f0764928-1abd-4876-ab56-7d87c5aa8396)
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
