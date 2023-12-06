@@ -4,21 +4,32 @@ import { validateFormData } from "../utils/validate";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 import { formatFirebaseErrors } from "../utils/firebase-error-handling";
 import { auth } from "../utils/firebase";
+import { useDispatch, useSelector } from "react-redux";
+import { addUser, removeUser } from "../utils/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const user = useSelector((store) => store.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [signedInUser, setSignedInUser] = useState(null);
 
+  const name = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
 
   const toggleSignInForm = () => {
     setIsSignInForm(!isSignInForm);
+    if (name?.current?.value) name.current.value = "";
+    if (email?.current?.value) email.current.value = "";
+    if (password?.current?.value) password.current.value = "";
   };
+
   const handleButtonClick = () => {
     //  validate before signin or sign up
     //  If we are using useRef the actual value will be there in current object so need to destructure it.
@@ -40,7 +51,27 @@ const Login = () => {
           // Signed up
           const user = userCredential.user;
           console.log(user);
-          alert("New user registered succesfully");
+
+          updateProfile(user, {
+            displayName: name?.current?.value,
+            photoURL: "https://avatars.githubusercontent.com/u/47672660?v=4",
+          })
+            .then(() => {
+              // Profile updated!
+              const { uid, email, displayName, photoURL } = auth.currentUser;
+              dispatch(
+                addUser({
+                  uid: uid,
+                  email: email,
+                  displayName: displayName,
+                  photoURL: photoURL,
+                })
+              );
+              navigate("/browse");
+            })
+            .catch((error) => {
+              setErrorMessage(error.message);
+            });
         })
         .catch((error) => {
           const { code: errorCode, message: errorMessage } = error;
@@ -57,9 +88,19 @@ const Login = () => {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
+
+          const { uid, email, displayName, photoURL } = user;
+          dispatch(
+            addUser({
+              uid: uid,
+              email: email,
+              displayName: displayName,
+              photoURL: photoURL,
+            })
+          );
           console.log(user);
-          setSignedInUser(user.email);
           alert(`${user.email} logged in successfully`);
+          navigate("/browse");
         })
         .catch((error) => {
           const { code: errorCode, message: errorMessage } = error;
@@ -68,10 +109,10 @@ const Login = () => {
         });
     }
   };
+
   return (
     <div>
       <Header />
-      <p className="text-center">signedIn User : {signedInUser}</p>
       <div className="absolute">
         <img
           className=" w-full h-full"
@@ -89,6 +130,7 @@ const Login = () => {
 
         {!isSignInForm && (
           <input
+            ref={name}
             type="text"
             placeholder="Enter Full Name"
             className="p-4 mx-auto my-4 w-full bg-slate-800"
